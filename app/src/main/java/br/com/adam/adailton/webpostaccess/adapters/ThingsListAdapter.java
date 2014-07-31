@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import br.com.adam.adailton.webpostaccess.R;
-import br.com.adam.adailton.webpostaccess.models.Thing;
+import br.com.adam.adailton.webpostaccess.pojo.Thing;
 
 /**
  * Created by ad036950 on 30/07/2014.

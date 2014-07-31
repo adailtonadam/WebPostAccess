@@ -1,4 +1,4 @@
-package br.com.adam.adailton.webpostaccess.models;
+package br.com.adam.adailton.webpostaccess.pojo;
 
 /**
  * Created by adam on 30/07/2014.
