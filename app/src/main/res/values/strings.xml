@@ -6,5 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_things_list">ThingsList</string>
     <string name="title_activity_things_manager">ThingsManager</string>
+    <string name="activity_things_manager_type">Tipo da coisa</string>
+    <string name="activity_things_manager_name">Nome da coisa</string>
+    <string name="activity_things_manager_button_save">Ok</string>
+    <string name="activity_things_manager_editing">Editando</string>
+    <string name="activity_things_manager_adding">Incluindo</string>
 
 </resources>
