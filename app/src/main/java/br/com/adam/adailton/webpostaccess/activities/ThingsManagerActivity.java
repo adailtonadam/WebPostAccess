@@ -107,14 +107,27 @@ public class ThingsManagerActivity extends Activity implements
         if(pDialog != null) {
             pDialog.hide();
         }
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Sucesso");
-        alertDialog.setMessage("Item atualizado com sucesso");
-        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
+        if(response.toString().contains("Ok")) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Sucesso");
+            alertDialog.setMessage("Item atualizado com sucesso");
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            alertDialog.show();
+        } else {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Http error");
+            alertDialog.setMessage("Houve um erro ao carregar dados do servidor http");
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            //  alertDialog.setIcon(R.drawable.icon);
+            alertDialog.show();
+        }
 
     }
 
@@ -139,7 +152,7 @@ public class ThingsManagerActivity extends Activity implements
     private void save(final String name, final String type){
         String tag_json_obj = "json_insert";
         String url;
-        if(currentEditId != null) {
+        if(currentEditId == null) {
             url = "http://adailtonadamdev.ddns.net/things/insert_things.php";
         } else {
             url = "http://adailtonadamdev.ddns.net/things/update_things.php";
