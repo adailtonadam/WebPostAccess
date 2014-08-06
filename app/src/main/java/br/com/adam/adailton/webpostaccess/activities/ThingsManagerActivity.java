@@ -94,6 +94,7 @@ public class ThingsManagerActivity extends Activity implements
             name.setBackgroundColor(Color.YELLOW);
             name.setVisibility(View.VISIBLE);
             canSave = false;
+            canSave = false;
         }
         if(!canSave){
             return;
