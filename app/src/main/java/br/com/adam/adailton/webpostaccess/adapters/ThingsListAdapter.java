@@ -1,6 +1,7 @@
 package br.com.adam.adailton.webpostaccess.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import br.com.adam.adailton.webpostaccess.R;
+import br.com.adam.adailton.webpostaccess.activities.ThingsManagerActivity;
 import br.com.adam.adailton.webpostaccess.pojo.Thing;
 
 /**
@@ -54,11 +56,22 @@ public class ThingsListAdapter extends BaseAdapter {
         TextView name = (TextView) view.findViewById(R.id.adapter_textview_name);
         TextView type = (TextView) view.findViewById(R.id.adapter_textview_type);
         TextView date = (TextView) view.findViewById(R.id.adapter_textview_date);
-        TextView id = (TextView) view.findViewById(R.id.adapter_textview_id);
-        name.setText(objectList.get(position).getName());
-        type.setText(objectList.get(position).getType());
-        date.setText(objectList.get(position).getDate());
+        TextView id = (TextView) view.findViewById(R.id.adapter_textview_semdados);
+        name.setText(objectList.get(position).getNome());
+        type.setText(objectList.get(position).getTipo());
+        date.setText(objectList.get(position).getData());
         id.setText(String.valueOf(objectList.get(position).getId()));
+
+        view.findViewById(R.id.adapter_things_list_layout).setOnClickListener( new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, ThingsManagerActivity.class);
+                intent.putExtra("thing_id",String.valueOf(objectList.get(position).getId()));
+                activity.startActivity(intent);
+            }
+        });
+
         return view;
     }
 

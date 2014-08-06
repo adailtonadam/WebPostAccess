@@ -15,23 +15,16 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
+import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import br.com.adam.adailton.webpostaccess.R;
-import br.com.adam.adailton.webpostaccess.pojo.Thing;
 import br.com.adam.adailton.webpostaccess.volley.WebAccessController;
 
 public class ThingsManagerActivity extends Activity implements
-        Response.Listener<JSONObject>,
+        Response.Listener<String>,
         Response.ErrorListener {
 
     String currentEditId = null;
@@ -47,18 +40,18 @@ public class ThingsManagerActivity extends Activity implements
         setContentView(R.layout.activity_things_manager);
         currentEditId = getIntent().getStringExtra("thing_id");
 
-        name = (EditText)findViewById(R.id.activity_things_manager_name);
-        type = (EditText)findViewById(R.id.activity_things_manager_type);
+        name = (EditText) findViewById(R.id.activity_things_manager_name);
+        type = (EditText) findViewById(R.id.activity_things_manager_type);
 
         String editingText;
-        if(currentEditId != null) {
+        if (currentEditId != null) {
             editingText = getResources().getString(R.string.activity_things_manager_editing) + " " + currentEditId;
         } else {
             editingText = getResources().getString(R.string.activity_things_manager_adding);
+            findViewById(R.id.activity_things_manager_button_remove).setVisibility(View.GONE);
         }
-        ((TextView)findViewById(R.id.activity_things_manager_editing)).setText(editingText);
+        ((TextView) findViewById(R.id.activity_things_manager_editing)).setText(editingText);
     }
-
 
 
     @Override
@@ -80,54 +73,70 @@ public class ThingsManagerActivity extends Activity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void onButtonSaveClick(View v){
+    public void onButtonRemoveClick(View v) {
+
+    }
+
+    public void onButtonSaveClick(View v) {
 
         boolean canSave = true;
-        if(type.getText().toString().trim().isEmpty()){
+        if (type.getText().toString().trim().isEmpty()) {
             type.setVisibility(View.INVISIBLE);
             type.setBackgroundColor(Color.YELLOW);
             type.setVisibility(View.VISIBLE);
             canSave = false;
         }
-        if(name.getText().toString().trim().isEmpty()){
+        if (name.getText().toString().trim().isEmpty()) {
             name.setVisibility(View.INVISIBLE);
             name.setBackgroundColor(Color.YELLOW);
             name.setVisibility(View.VISIBLE);
             canSave = false;
         }
-        if(!canSave){
+        if (!canSave) {
             return;
         }
-        save(name.getText().toString().trim(),type.getText().toString().trim());
+        save(name.getText().toString().trim(), type.getText().toString().trim());
     }
 
     @Override
-    public void onResponse(JSONObject response) {
+    public void onResponse(String response) {
         // Log.d(TAG, response.toString());
-        if(pDialog != null) {
+        if (pDialog != null) {
             pDialog.hide();
         }
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Sucesso");
-        alertDialog.setMessage("Item atualizado com sucesso");
-        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
+        if (response.compareTo("Ok") == 0) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Sucesso");
+            alertDialog.setMessage("Item atualizado com sucesso");
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            alertDialog.show();
+        } else {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Http error");
+            alertDialog.setMessage("Não foi possível executar a operação");
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            //  alertDialog.setIcon(R.drawable.icon);
+            alertDialog.show();
+        }
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
         //VolleyLog.d(TAG, "Error: " + error.getMessage());
-        if(pDialog != null) {
+        if (pDialog != null) {
             pDialog.hide();
         }
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Http error");
-        alertDialog.setMessage("Houve um erro ao carregar dados do servidor http");
-        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+        alertDialog.setMessage("Houve um erro ao acessar o servidor http");
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
         });
@@ -136,10 +145,10 @@ public class ThingsManagerActivity extends Activity implements
     }
 
 
-    private void save(final String name, final String type){
+    private void save(final String name, final String type) {
         String tag_json_obj = "json_insert";
         String url;
-        if(currentEditId != null) {
+        if (currentEditId == null) {
             url = "http://adailtonadamdev.ddns.net/things/insert_things.php";
         } else {
             url = "http://adailtonadamdev.ddns.net/things/update_things.php";
@@ -148,15 +157,14 @@ public class ThingsManagerActivity extends Activity implements
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Carregando...");
         pDialog.show();
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,
-                url, null,this, this) {
+        StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
 
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("nome", name);
                 params.put("tipo", type);
-                if(currentEditId != null) {
+                if (currentEditId != null) {
                     params.put("id", currentEditId);
                 }
                 return params;

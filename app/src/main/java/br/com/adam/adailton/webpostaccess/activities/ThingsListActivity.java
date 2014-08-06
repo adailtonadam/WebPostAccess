@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -51,6 +52,7 @@ public class ThingsListActivity extends Activity implements
         ListView list = (ListView)findViewById(R.id.thigsListView);
 
         if (things != null && things.size() != 0) {
+            findViewById(R.id.adapter_textview_semdados).setVisibility(View.GONE);
             list.setAdapter(new ThingsListAdapter(this, things));
         }
     }

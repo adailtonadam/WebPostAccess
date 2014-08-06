@@ -5,11 +5,10 @@ package br.com.adam.adailton.webpostaccess.pojo;
  */
 public class Thing {
 
-
     private long id;
-    private String name;
-    private String type;
-    private String date;
+    private String nome;
+    private String tipo;
+    private String data;
 
 
     public long getId() {
@@ -20,27 +19,33 @@ public class Thing {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getType() {
-        return type;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public String getDate() {
-        return date;
+    public String getData() {
+        return data;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setData(String data) {
+        this.data = data;
     }
+
+
+
+
+
+
 }
