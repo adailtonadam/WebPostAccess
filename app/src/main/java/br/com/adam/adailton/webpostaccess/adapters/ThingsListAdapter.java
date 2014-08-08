@@ -68,6 +68,8 @@ public class ThingsListAdapter extends BaseAdapter {
             public void onClick(View view) {
                 Intent intent = new Intent(activity, ThingsManagerActivity.class);
                 intent.putExtra("thing_id",String.valueOf(objectList.get(position).getId()));
+                intent.putExtra("thing_name",String.valueOf(objectList.get(position).getNome()));
+                intent.putExtra("thing_type",String.valueOf(objectList.get(position).getTipo()));
                 activity.startActivity(intent);
             }
         });

@@ -12,5 +12,17 @@
     <string name="activity_things_manager_editing">Editando</string>
     <string name="activity_things_manager_adding">Incluindo</string>
     <string name="activity_things_manager_button_remove">Remover</string>
+    <string name="activity_things_manager_button_error_ok">Ok</string>
+    <string name="activity_things_manager_msg_deleted_ok">Item removido com sucesso!</string>
+    <string name="activity_things_manager_msg_inserted_ok">Item incluído com sucesso!</string>
+    <string name="activity_things_manager_msg_edited_ok">Item alterado com sucesso!</string>
+    <string name="activity_things_manager_msg_deleted_nok">Nção foi possível remover o item.</string>
+    <string name="activity_things_manager_msg_inserted_nok">Não foi possível incluir o item.</string>
+    <string name="activity_things_manager_msg_edited_nok">Não foi possível atualizar o item.</string>
+    <string name="activity_things_manager_msg_operation_error">Operação não completada.</string>
+    <string name="activity_things_manager_msg_http_error">Erro.</string>
+    <string name="activity_things_manager_msg_http_error1">Não foi possível acessar o servidor.</string>
+    <string name="activity_things_manager_msg_loading">Executando, aguarde.</string>
+
 
 </resources>

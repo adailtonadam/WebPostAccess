@@ -10,7 +10,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Id"
         android:id="@+id/adapter_textview_semdados"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/adapter_textview_name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -33,10 +33,8 @@
         android:text="tipo"
         android:id="@+id/adapter_textview_type"
         android:layout_below="@+id/adapter_textview_name"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/adapter_textview_name"
-        android:layout_alignEnd="@+id/adapter_textview_name" />
+        android:layout_alignLeft="@+id/adapter_textview_name"
+        android:layout_alignStart="@+id/adapter_textview_name" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,7 +43,7 @@
         android:text="Date"
         android:id="@+id/adapter_textview_date"
         android:layout_below="@+id/adapter_textview_type"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

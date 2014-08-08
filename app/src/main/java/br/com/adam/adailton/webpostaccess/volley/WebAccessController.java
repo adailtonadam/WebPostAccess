@@ -24,6 +24,7 @@ public class WebAccessController extends Application {
     public void onCreate() {
         super.onCreate();
         ourInstance = this;
+
     }
 
     public static synchronized WebAccessController getInstance() {

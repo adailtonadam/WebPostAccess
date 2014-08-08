@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -32,7 +33,7 @@ public class ThingsManagerActivity extends Activity implements
     EditText name;
     EditText type;
     ProgressDialog pDialog = null;
-
+    boolean deleting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,14 @@ public class ThingsManagerActivity extends Activity implements
         String editingText;
         if (currentEditId != null) {
             editingText = getResources().getString(R.string.activity_things_manager_editing) + " " + currentEditId;
+
+            if(getIntent().getStringExtra("thing_name") != null){
+                name.setText(getIntent().getStringExtra("thing_name"));
+            }
+            if(getIntent().getStringExtra("thing_type") != null){
+                type.setText(getIntent().getStringExtra("thing_type"));
+            }
+
         } else {
             editingText = getResources().getString(R.string.activity_things_manager_adding);
             findViewById(R.id.activity_things_manager_button_remove).setVisibility(View.GONE);
@@ -74,7 +83,29 @@ public class ThingsManagerActivity extends Activity implements
     }
 
     public void onButtonRemoveClick(View v) {
+        String tag_json_obj = "json_delete";
+        String url;
+        if (currentEditId == null) {
+          return;
+        }
+        deleting =  true;
+        url = "http://adailtonadamdev.ddns.net/things/delete_thing.php";
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
+        pDialog.show();
+        StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
 
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", currentEditId);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        WebAccessController.getInstance().addToRequestQueue(req, tag_json_obj);
     }
 
     public void onButtonSaveClick(View v) {
@@ -100,29 +131,38 @@ public class ThingsManagerActivity extends Activity implements
 
     @Override
     public void onResponse(String response) {
-        // Log.d(TAG, response.toString());
         if (pDialog != null) {
             pDialog.hide();
         }
         if (response.compareTo("Ok") == 0) {
-            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-            alertDialog.setTitle("Sucesso");
-            alertDialog.setMessage("Item atualizado com sucesso");
-            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            alertDialog.show();
+
+            String message;
+            if(deleting){
+               message =  getResources().getString(R.string.activity_things_manager_msg_deleted_ok);
+            } else if(currentEditId != null){
+                message =  getResources().getString(R.string.activity_things_manager_msg_edited_ok);
+            } else {
+                message =  getResources().getString(R.string.activity_things_manager_msg_inserted_ok);
+            }
+            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+            WebAccessController.getInstance().getRequestQueue().getCache().invalidate(ThingsListActivity.url, true);
+            finish();
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-            alertDialog.setTitle("Http error");
-            alertDialog.setMessage("Não foi possível executar a operação");
-            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+            alertDialog.setTitle(getResources().getString(R.string.activity_things_manager_msg_operation_error));
+            if(deleting){
+                alertDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_deleted_nok));
+            } else if(currentEditId != null){
+                alertDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_edited_nok));
+            } else {
+                alertDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_inserted_nok));
+            }
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+                    getResources().getString(R.string.activity_things_manager_button_error_ok),
+                    new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                 }
             });
-            //  alertDialog.setIcon(R.drawable.icon);
             alertDialog.show();
         }
     }
@@ -134,13 +174,15 @@ public class ThingsManagerActivity extends Activity implements
             pDialog.hide();
         }
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Http error");
-        alertDialog.setMessage("Houve um erro ao acessar o servidor http");
-        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+        alertDialog.setTitle(getResources().getString(R.string.activity_things_manager_msg_http_error));
+        alertDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_http_error1));
+
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+                getResources().getString(R.string.activity_things_manager_button_error_ok),
+                new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
         });
-        //  alertDialog.setIcon(R.drawable.icon);
         alertDialog.show();
     }
 
@@ -149,14 +191,15 @@ public class ThingsManagerActivity extends Activity implements
         String tag_json_obj = "json_insert";
         String url;
         if (currentEditId == null) {
-            url = "http://adailtonadamdev.ddns.net/things/insert_things.php";
+            url = "http://adailtonadamdev.ddns.net/things/insert_thing.php";
         } else {
-            url = "http://adailtonadamdev.ddns.net/things/update_things.php";
+            url = "http://adailtonadamdev.ddns.net/things/update_thing.php";
         }
 
         pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Carregando...");
+        pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
         pDialog.show();
+
         StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
 
             @Override
@@ -172,53 +215,8 @@ public class ThingsManagerActivity extends Activity implements
 
         };
 
-        // Adding request to request queue
         WebAccessController.getInstance().addToRequestQueue(req, tag_json_obj);
     }
 
-    /*
-    // Tag used to cancel the request
-String tag_json_obj = "json_obj_req";
 
-String url = "http://api.androidhive.info/volley/person_object.json";
-
-ProgressDialog pDialog = new ProgressDialog(this);
-pDialog.setMessage("Loading...");
-pDialog.show();
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.POST,
-                url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, response.toString());
-                        pDialog.hide();
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d(TAG, "Error: " + error.getMessage());
-                        pDialog.hide();
-                    }
-                }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("name", "Androidhive");
-                params.put("email", "abc@androidhive.info");
-                params.put("password", "password123");
-
-                return params;
-            }
-
-        };
-
-// Adding request to request queue
-AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
-
-
-    * */
 }
