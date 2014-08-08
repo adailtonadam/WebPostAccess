@@ -12,6 +12,9 @@ import br.com.adam.adailton.webpostaccess.R;
 
 public class MainActivity extends Activity {
 
+    //static final String baseUrl = "http://177.96.134.195/";
+    static final String baseUrl = "http://adailtonadamdev.ddns.net/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,3 +51,4 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this,ThingsManagerActivity.class));
     }
 }
+

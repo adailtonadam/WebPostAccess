@@ -32,7 +32,8 @@ public class ThingsListActivity extends Activity implements
         Response.Listener<JSONArray>,
         Response.ErrorListener  {
 
-    static final String url = "http://adailtonadamdev.ddns.net/things/getall_things.php";
+
+    static final String url = "things/getall_things.php";
 
     List<Thing> things;
     ProgressDialog pDialog = null;
@@ -122,7 +123,7 @@ public class ThingsListActivity extends Activity implements
 
 
         Cache cache = WebAccessController.getInstance().getRequestQueue().getCache();
-        Cache.Entry entry = cache.get(url);
+        Cache.Entry entry = cache.get(MainActivity.baseUrl + url);
         if(entry != null){
             try {
                 String data = new String(entry.data, "UTF-8");
@@ -137,7 +138,7 @@ public class ThingsListActivity extends Activity implements
         pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
         pDialog.show();
 
-        JsonArrayRequest req = new JsonArrayRequest(url, this, this);
+        JsonArrayRequest req = new JsonArrayRequest(MainActivity.baseUrl +url, this, this);
         req.setShouldCache(true);
         // Adding request to request queue
         WebAccessController.getInstance().addToRequestQueue(req, tag_json_arry);

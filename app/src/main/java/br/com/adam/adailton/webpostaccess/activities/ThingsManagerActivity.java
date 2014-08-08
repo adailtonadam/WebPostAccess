@@ -89,7 +89,7 @@ public class ThingsManagerActivity extends Activity implements
           return;
         }
         deleting =  true;
-        url = "http://adailtonadamdev.ddns.net/things/delete_thing.php";
+        url = MainActivity.baseUrl + "things/delete_thing.php";
         pDialog = new ProgressDialog(this);
         pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
         pDialog.show();
@@ -145,7 +145,7 @@ public class ThingsManagerActivity extends Activity implements
                 message =  getResources().getString(R.string.activity_things_manager_msg_inserted_ok);
             }
             Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-            WebAccessController.getInstance().getRequestQueue().getCache().invalidate(ThingsListActivity.url, true);
+            WebAccessController.getInstance().getRequestQueue().getCache().invalidate(MainActivity.baseUrl + ThingsListActivity.url, true);
             finish();
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -191,9 +191,9 @@ public class ThingsManagerActivity extends Activity implements
         String tag_json_obj = "json_insert";
         String url;
         if (currentEditId == null) {
-            url = "http://adailtonadamdev.ddns.net/things/insert_thing.php";
+            url = MainActivity.baseUrl + "things/insert_thing.php";
         } else {
-            url = "http://adailtonadamdev.ddns.net/things/update_thing.php";
+            url = MainActivity.baseUrl + "things/update_thing.php";
         }
 
         pDialog = new ProgressDialog(this);
