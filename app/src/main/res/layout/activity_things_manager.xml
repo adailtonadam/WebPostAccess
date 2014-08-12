@@ -12,29 +12,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/activity_things_manager_name"
-        android:layout_marginTop="24dp"
         android:hint="@string/activity_things_manager_name"
+        android:maxLines="1"
+        android:singleLine="true"
         android:layout_below="@+id/activity_things_manager_editing"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:maxLines="1"
-        android:singleLine="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/activity_things_manager_type"
-        android:layout_marginTop="28dp"
         android:hint="@string/activity_things_manager_type"
+        android:maxLines="1"
+        android:singleLine="true"
         android:layout_below="@+id/activity_things_manager_name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/activity_things_manager_name"
-        android:layout_alignEnd="@+id/activity_things_manager_name"
-        android:maxLines="1"
-        android:singleLine="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,11 +47,11 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:layout_below="@+id/activity_things_manager_type"
+        android:layout_height="50dp"
+        android:id="@+id/linearLayout"
+        android:layout_above="@+id/activity_things_manager_button_save"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="36dp">
+        android:layout_alignParentStart="true">
 
         <Button
             android:layout_width="0dp"
@@ -70,14 +68,49 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/activity_things_manager_button_save"
-            android:id="@+id/activity_things_manager_button_save"
-            android:onClick="onButtonSaveClick"
-            android:layout_below="@+id/activity_things_manager_type"
-            android:layout_alignLeft="@+id/activity_things_manager_editing"
-            android:layout_alignStart="@+id/activity_things_manager_editing"
-            android:layout_weight="0.47" />
+            android:text="@string/activity_things_manager_button_addimage"
+            android:id="@+id/activity_things_manager_button_addimage"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false"
+            android:layout_weight="0.47"
+            android:onClick="onButtonAddImageClick" />
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_things_manager_button_save"
+        android:id="@+id/activity_things_manager_button_save"
+        android:onClick="onButtonSaveClick"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/activity_things_manager_editing"
+        android:layout_alignEnd="@+id/activity_things_manager_editing" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_things_manager_type"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/linearLayout"
+        android:foregroundGravity="center">
+
+        <ImageView
+            android:layout_width="287dp"
+            android:layout_height="match_parent"
+            android:id="@+id/activity_things_manager_imageView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/linearLayout"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter" />
+    </FrameLayout>
 
 </RelativeLayout>

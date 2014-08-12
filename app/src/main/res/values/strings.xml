@@ -24,6 +24,7 @@
     <string name="activity_things_manager_msg_http_error1">Não foi possível acessar o servidor.</string>
     <string name="activity_things_manager_msg_loading">Executando, aguarde.</string>
     <string name="activity_things_list_msg_loading">Carregando dados, aguarde.</string>
+    <string name="activity_things_manager_button_addimage">Imagem</string>
 
 
 </resources>
