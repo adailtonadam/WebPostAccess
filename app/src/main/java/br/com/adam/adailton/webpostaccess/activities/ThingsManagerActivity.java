@@ -132,7 +132,8 @@ public class ThingsManagerActivity extends Activity implements
     @Override
     public void onResponse(String response) {
         if (pDialog != null) {
-            pDialog.hide();
+            pDialog.dismiss();
+            pDialog = null;
         }
         if (response.compareTo("Ok") == 0) {
 
@@ -171,7 +172,8 @@ public class ThingsManagerActivity extends Activity implements
     public void onErrorResponse(VolleyError error) {
         //VolleyLog.d(TAG, "Error: " + error.getMessage());
         if (pDialog != null) {
-            pDialog.hide();
+            pDialog.dismiss();
+            pDialog = null;
         }
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(getResources().getString(R.string.activity_things_manager_msg_http_error));

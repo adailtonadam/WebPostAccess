@@ -93,7 +93,8 @@ public class ThingsListActivity extends Activity implements
         Gson gson = new Gson();
         things = Arrays.asList(gson.fromJson(value, Thing[].class));
         if(pDialog != null) {
-            pDialog.hide();
+            pDialog.dismiss();
+            pDialog = null;
         }
         setAdapter();
     }
@@ -102,7 +103,8 @@ public class ThingsListActivity extends Activity implements
     public void onErrorResponse(VolleyError error) {
         //VolleyLog.d(TAG, "Error: " + error.getMessage());
         if(pDialog != null) {
-            pDialog.hide();
+            pDialog.dismiss();
+            pDialog = null;
         }
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Http error");
@@ -135,7 +137,7 @@ public class ThingsListActivity extends Activity implements
             }
         }
         pDialog = new ProgressDialog(this);
-        pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
+        pDialog.setMessage(getResources().getString(R.string.activity_things_list_msg_loading));
         pDialog.show();
 
         JsonArrayRequest req = new JsonArrayRequest(MainActivity.baseUrl +url, this, this);
