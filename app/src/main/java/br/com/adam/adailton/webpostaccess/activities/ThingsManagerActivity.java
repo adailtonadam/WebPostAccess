@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -32,7 +32,8 @@ public class ThingsManagerActivity extends Activity implements
         Response.ErrorListener {
 
     String currentEditId = null;
-
+    boolean imageAltered = false;
+    boolean imageUploaded = false;
     EditText name;
     EditText type;
     ProgressDialog pDialog = null;
@@ -144,9 +145,24 @@ public class ThingsManagerActivity extends Activity implements
             if(deleting){
                message =  getResources().getString(R.string.activity_things_manager_msg_deleted_ok);
             } else if(currentEditId != null){
-                message =  getResources().getString(R.string.activity_things_manager_msg_edited_ok);
+                message = getResources().getString(R.string.activity_things_manager_msg_edited_ok);
             } else {
                 message =  getResources().getString(R.string.activity_things_manager_msg_inserted_ok);
+            }
+            if(imageAltered){
+                if(!imageUploaded) {
+                    if(currentEditId != null) {
+                        uploadImage(currentEditId);
+                        return;
+                    } else{
+
+                        //retornar o id criado junto com o ok
+                       // uploadImage(currentEditId);
+                        //return;
+                    }
+
+
+                }
             }
             Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
             WebAccessController.getInstance().getRequestQueue().getCache().invalidate(MainActivity.baseUrl + ThingsListActivity.url, true);
@@ -223,9 +239,46 @@ public class ThingsManagerActivity extends Activity implements
         WebAccessController.getInstance().addToRequestQueue(req, tag_json_obj);
     }
 
+    private void uploadImage(String id) {
+
+        Bitmap bp;
+
+        ImageView img = (ImageView) findViewById(R.id.activity_things_manager_imageView);
+      //  bp = img.getI
+
+
+        String tag_json_obj = "json_insert";
+        String url;
+        url = MainActivity.baseUrl + "things/insert_thing_image.php";
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
+        pDialog.show();
+
+        StringRequest req = new   ImageRequest(Request.Method.POST, url, this, this) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", id);
+            //    params.put("image", type);
+                if (currentEditId != null) {
+                    params.put("id", currentEditId);
+                }
+                return params;
+            }
+
+        };
+
+        WebAccessController.getInstance().addToRequestQueue(req, tag_json_obj);
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        imageAltered = true;
         Bitmap bp = (Bitmap) data.getExtras().get("data");
 
         ImageView img =(ImageView)findViewById(R.id.activity_things_manager_imageView);
