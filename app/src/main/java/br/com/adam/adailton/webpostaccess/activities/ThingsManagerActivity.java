@@ -26,6 +26,10 @@ import java.util.Map;
 
 import br.com.adam.adailton.webpostaccess.R;
 import br.com.adam.adailton.webpostaccess.volley.WebAccessController;
+import br.com.adam.adailton.webpostaccess.webUpload.*;
+
+
+
 
 public class ThingsManagerActivity extends Activity implements
         Response.Listener<String>,
@@ -244,13 +248,17 @@ public class ThingsManagerActivity extends Activity implements
         Bitmap bp;
 
         ImageView img = (ImageView) findViewById(R.id.activity_things_manager_imageView);
-      //  bp = img.getI
-
-
-        String tag_json_obj = "json_insert";
+        bp = img.getDrawingCache();
         String url;
         url = MainActivity.baseUrl + "things/insert_thing_image.php";
 
+
+
+        ImageUploadTask imageUploadTask =  new ImageUploadTask(this,url,bp,id);
+
+        imageUploadTask.execute();
+
+        /*
         pDialog = new ProgressDialog(this);
         pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
         pDialog.show();
@@ -271,6 +279,7 @@ public class ThingsManagerActivity extends Activity implements
         };
 
         WebAccessController.getInstance().addToRequestQueue(req, tag_json_obj);
+        */
     }
 
 

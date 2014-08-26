@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -43,22 +44,27 @@ import android.util.Base64;
 /**
  * Created by ad036950 on 20/08/2014.
  */
-class ImageUploadTask extends AsyncTask<Void, Void, String> {
+public class ImageUploadTask extends AsyncTask<Void, Void, String> {
     private String webAddressToPost = "";
     private Activity activity = null;
     // private ProgressDialog dialog;
     private ProgressDialog dialog = null;
     private Bitmap bitmap;
+    private String itemId;
 
-    ImageUploadTask(Activity activity, String webAddressToPost) {
+
+
+    public ImageUploadTask(Activity activity, String webAddressToPost, Bitmap bitmap, String itemId) {
         super();
-       this.activity = activity;
-       this.webAddressToPost = webAddressToPost;
+        this.activity = activity;
+        this.webAddressToPost = webAddressToPost;
+        this.bitmap = bitmap;
+        this.itemId = itemId;
     }
 
     @Override
     protected void onPreExecute() {
-        if(dialog == null){
+        if (dialog == null) {
             dialog = new ProgressDialog(activity);
         }
         dialog.setMessage("Uploading...");
@@ -72,7 +78,6 @@ class ImageUploadTask extends AsyncTask<Void, Void, String> {
             HttpContext localContext = new BasicHttpContext();
             HttpPost httpPost = new HttpPost(webAddressToPost);
 
-           // MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -81,12 +86,15 @@ class ImageUploadTask extends AsyncTask<Void, Void, String> {
             byte[] data = bos.toByteArray();
             String file = Base64.encodeToString(data, Base64.DEFAULT);
 
-            StringBody fileBody = new StringBody(file,ContentType.); //image should be a String
-            builder.addPart("uploaded", fileBody);
-            builder.addPart("someOtherStringToSend",ContentType.DEFAULT_TEXT);
+            StringBody fileBody = new StringBody(file, ContentType.TEXT_PLAIN);
+            builder.addPart("image", fileBody);
+
+            StringBody itemIdField = new StringBody(itemId, ContentType.TEXT_PLAIN);
+
+            builder.addPart("itemIdField", itemIdField);
             HttpEntity entity = builder.build();
             httpPost.setEntity(entity);
-            HttpResponse response = httpClient.execute(httpPost,localContext);
+            HttpResponse response = httpClient.execute(httpPost, localContext);
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     response.getEntity().getContent(), "UTF-8"));
 
@@ -101,6 +109,6 @@ class ImageUploadTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         dialog.dismiss();
-       // Toast.makeText(getApplicationContext(), "file uploaded",Toast.LENGTH_LONG).show();
+        // Toast.makeText(getApplicationContext(), "file uploaded",Toast.LENGTH_LONG).show();
     }
 }
