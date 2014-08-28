@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -244,18 +245,12 @@ public class ThingsManagerActivity extends Activity implements
     }
 
     private void uploadImage(String id) {
-
         Bitmap bp;
-
-        ImageView img = (ImageView) findViewById(R.id.activity_things_manager_imageView);
-        bp = img.getDrawingCache();
+        ImageView image = (ImageView) findViewById(R.id.activity_things_manager_imageView);
+        bp =  ((BitmapDrawable)image.getDrawable()).getBitmap();
         String url;
         url = MainActivity.baseUrl + "things/insert_thing_image.php";
-
-
-
         ImageUploadTask imageUploadTask =  new ImageUploadTask(this,url,bp,id);
-
         imageUploadTask.execute();
 
         /*

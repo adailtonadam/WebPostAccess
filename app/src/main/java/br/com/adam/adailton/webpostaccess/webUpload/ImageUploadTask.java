@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -39,6 +40,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
 
 
 /**
@@ -73,6 +76,8 @@ public class ImageUploadTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
+        String sResponse = "";
+        Exception ex;
         try {
             HttpClient httpClient = new DefaultHttpClient();
             HttpContext localContext = new BasicHttpContext();
@@ -91,24 +96,24 @@ public class ImageUploadTask extends AsyncTask<Void, Void, String> {
 
             StringBody itemIdField = new StringBody(itemId, ContentType.TEXT_PLAIN);
 
-            builder.addPart("itemIdField", itemIdField);
+            builder.addPart("id", itemIdField);
             HttpEntity entity = builder.build();
             httpPost.setEntity(entity);
             HttpResponse response = httpClient.execute(httpPost, localContext);
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     response.getEntity().getContent(), "UTF-8"));
 
-            String sResponse = reader.readLine();
-            return sResponse;
+             sResponse = reader.readLine();
         } catch (Exception e) {
-            // something went wrong. connection with the server error
+            ex = e;
+            sResponse =  e.getMessage();
         }
-        return null;
+        return sResponse;
     }
 
     @Override
     protected void onPostExecute(String result) {
         dialog.dismiss();
-        // Toast.makeText(getApplicationContext(), "file uploaded",Toast.LENGTH_LONG).show();
+         Toast.makeText(activity.getApplicationContext(), "file uploaded " + result, Toast.LENGTH_LONG).show();
     }
 }
