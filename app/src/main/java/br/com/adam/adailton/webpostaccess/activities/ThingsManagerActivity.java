@@ -24,13 +24,20 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import br.com.adam.adailton.webpostaccess.R;
+import br.com.adam.adailton.webpostaccess.pojo.Thing;
+import br.com.adam.adailton.webpostaccess.pojo.ThingImage;
 import br.com.adam.adailton.webpostaccess.volley.WebAccessController;
 import br.com.adam.adailton.webpostaccess.webUpload.*;
 
@@ -313,52 +320,55 @@ public class ThingsManagerActivity extends Activity implements
         pDialog = new ProgressDialog(this);
         pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
         pDialog.show();
-/*
-        ImageRequest req = new ImageRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        tv.setText(response); // We set the response data in the TextView
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("Error ["+error+"]");
 
-            })
-            {
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("id", id);
-                return params;
+        Cache cache = WebAccessController.getInstance().getRequestQueue().getCache();
+        Cache.Entry entry = cache.get(url+id);
+        if(entry != null){
+            try {
+                String data = new String(entry.data, "UTF-8");
+                Gson gson = new Gson();
+                ThingImage thingImage = (ThingImage)gson.fromJson(data, ThingImage.class);
+                if(pDialog != null) {
+                    pDialog.dismiss();
+                    pDialog = null;
+                }
+                if(!entry.refreshNeeded()) {
+                    return;
+                }
+            } catch (UnsupportedEncodingException e) {
             }
+        }
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getResources().getString(R.string.activity_things_list_msg_loading));
+        pDialog.show();
 
-        };*/
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,url,null,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response) {
 
-          /*  ImageRequest imgRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap response) {
-                    img.setImageBitmap(response);
-                }
-            }, 0, 0, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    img.setImageResource(R.drawable.ic_launcher);
-                }
-            });
+                    }
+                },this);
 
-            WebAccessController.getInstance().addToRequestQueue(imgRequest, tag_json_obj);
-            */
+        req.setShouldCache(true);
+        // Adding request to request queue
+        WebAccessController.getInstance().addToRequestQueue(req, tag_json_obj);
 
+
+
+
+
+
+/*
 
         WebAccessController.getInstance().getImageLoader().get(url+"?id="+id,
                 ImageLoader.getImageListener(img,
                         R.drawable.ic_launcher,
                         android.R.drawable.ic_dialog_alert)
                 );
-
+*/
 
     }
 
