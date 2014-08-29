@@ -16,12 +16,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Cache;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +41,8 @@ public class ThingsManagerActivity extends Activity implements
         Response.Listener<String>,
         Response.ErrorListener {
 
+    static final String imageGetUrl = "things/get_thing_image.php";
+
     String currentEditId = null;
     boolean imageAltered = false;
     boolean imageUploaded = false;
@@ -43,6 +50,9 @@ public class ThingsManagerActivity extends Activity implements
     EditText type;
     ProgressDialog pDialog = null;
     boolean deleting = false;
+    ImageView img;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,7 @@ public class ThingsManagerActivity extends Activity implements
 
         name = (EditText) findViewById(R.id.activity_things_manager_name);
         type = (EditText) findViewById(R.id.activity_things_manager_type);
+        img =(ImageView)findViewById(R.id.activity_things_manager_imageView);
 
         String editingText;
         if (currentEditId != null) {
@@ -285,7 +296,7 @@ public class ThingsManagerActivity extends Activity implements
         imageAltered = true;
         Bitmap bp = (Bitmap) data.getExtras().get("data");
 
-        ImageView img =(ImageView)findViewById(R.id.activity_things_manager_imageView);
+
         img.setImageBitmap(bp);
     }
 
@@ -293,5 +304,64 @@ public class ThingsManagerActivity extends Activity implements
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent,0);
     }
+
+    public void getImage(String id) {
+        String tag_json_obj = "json_image";
+        String url;
+        url = MainActivity.baseUrl + "things/get_thing_image.php";
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
+        pDialog.show();
+/*
+        ImageRequest req = new ImageRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        tv.setText(response); // We set the response data in the TextView
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error ["+error+"]");
+
+            })
+            {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", id);
+                return params;
+            }
+
+        };*/
+
+          /*  ImageRequest imgRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap response) {
+                    img.setImageBitmap(response);
+                }
+            }, 0, 0, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    img.setImageResource(R.drawable.ic_launcher);
+                }
+            });
+
+            WebAccessController.getInstance().addToRequestQueue(imgRequest, tag_json_obj);
+            */
+
+
+        WebAccessController.getInstance().getImageLoader().get(url+"?id="+id,
+                ImageLoader.getImageListener(img,
+                        R.drawable.ic_launcher,
+                        android.R.drawable.ic_dialog_alert)
+                );
+
+
+    }
+
+
 
 }
