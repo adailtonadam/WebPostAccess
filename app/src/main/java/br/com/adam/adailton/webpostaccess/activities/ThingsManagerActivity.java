@@ -6,9 +6,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -87,6 +89,7 @@ public class ThingsManagerActivity extends Activity implements
             findViewById(R.id.activity_things_manager_button_remove).setVisibility(View.GONE);
         }
         ((TextView) findViewById(R.id.activity_things_manager_editing)).setText(editingText);
+        getImage(currentEditId);
     }
 
 
@@ -264,8 +267,7 @@ public class ThingsManagerActivity extends Activity implements
 
     private void uploadImage(String id) {
         Bitmap bp;
-        ImageView image = (ImageView) findViewById(R.id.activity_things_manager_imageView);
-        bp =  ((BitmapDrawable)image.getDrawable()).getBitmap();
+        bp =  ((BitmapDrawable)img.getDrawable()).getBitmap();
         String url;
         url = MainActivity.baseUrl + "things/insert_thing_image.php";
         ImageUploadTask imageUploadTask =  new ImageUploadTask(this,url,bp,id);
@@ -317,18 +319,17 @@ public class ThingsManagerActivity extends Activity implements
         String url;
         url = MainActivity.baseUrl + "things/get_thing_image.php";
 
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage(getResources().getString(R.string.activity_things_manager_msg_loading));
-        pDialog.show();
-
 
         Cache cache = WebAccessController.getInstance().getRequestQueue().getCache();
-        Cache.Entry entry = cache.get(url+id);
+        Cache.Entry entry = cache.get(url);
         if(entry != null){
             try {
                 String data = new String(entry.data, "UTF-8");
                 Gson gson = new Gson();
                 ThingImage thingImage = (ThingImage)gson.fromJson(data, ThingImage.class);
+                byte[] byteArray =  Base64.decode(thingImage.getImage(), Base64.DEFAULT) ;
+                Bitmap bmp1 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                img.setImageBitmap(bmp1);
                 if(pDialog != null) {
                     pDialog.dismiss();
                     pDialog = null;
@@ -343,12 +344,24 @@ public class ThingsManagerActivity extends Activity implements
         pDialog.setMessage(getResources().getString(R.string.activity_things_list_msg_loading));
         pDialog.show();
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,url,null,
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id", currentEditId);
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,url+"?id=" +currentEditId,new JSONObject(params),
                 new Response.Listener<JSONObject>()
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        if (pDialog != null) {
+                            pDialog.dismiss();
+                            pDialog = null;
+                        }
+                        //alterar retorno para {"id":"9","image":"asdsa"}
+                        Gson gson = new Gson();
+                        ThingImage thingImage = (ThingImage)gson.fromJson(response.toString(), ThingImage.class);
+                        byte[] byteArray =  Base64.decode(thingImage.getImage(), Base64.DEFAULT) ;
+                        Bitmap bmp1 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        img.setImageBitmap(bmp1);
                     }
                 },this);
 
